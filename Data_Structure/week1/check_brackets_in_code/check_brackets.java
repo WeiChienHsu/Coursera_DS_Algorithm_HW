@@ -1,7 +1,8 @@
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.Stack;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 class Bracket {
     Bracket(char type, int position) {
@@ -28,20 +29,49 @@ class check_brackets {
         InputStreamReader input_stream = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input_stream);
         String text = reader.readLine();
+        if(areStringValid(text) == -1) {
+            System.out.println("Success");
+        } else {
+            System.out.println(areStringValid(text));
+        }
+    }
 
-        Stack<Bracket> opening_brackets_stack = new Stack<Bracket>();
+
+    private static int areStringValid(String text) {
+
+        Deque<Bracket> opening_brackets_stack;
+        opening_brackets_stack = new ArrayDeque<Bracket>();
+
         for (int position = 0; position < text.length(); ++position) {
             char next = text.charAt(position);
 
             if (next == '(' || next == '[' || next == '{') {
-                // Process opening bracket, write your code here
+                Bracket left = new Bracket(next, position);
+                opening_brackets_stack.offerLast(left);
             }
 
             if (next == ')' || next == ']' || next == '}') {
-                // Process closing bracket, write your code here
+                if(opening_brackets_stack.isEmpty()) {
+                    return position + 1;
+                }
+
+                Bracket right = opening_brackets_stack.pollLast();
+                if((next == ')' && right.type != '(') ||
+                   (next == ']' && right.type != '[') ||
+                   (next == '}' && right.type != '{')) {
+                    return position + 1;
+
+                }
             }
         }
 
-        // Printing answer, write your code here
+        int pos = -1;
+        while (!opening_brackets_stack.isEmpty()){
+            pos = opening_brackets_stack.pollLast().position + 1;
+        }
+            return pos;
     }
 }
+
+
+
